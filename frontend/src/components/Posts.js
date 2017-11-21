@@ -7,11 +7,18 @@ import uuidv1 from 'uuid/v1'
 import serializeForm from 'form-serialize'
 import { timestampToDate } from '../utils/timestamp_date'
 import sortBy from 'sort-by'
+import { getAllCategories } from '../actions/actions_categories'
+import Header from './Header'
+import Modal from 'react-modal'
+import CloseIcon from 'react-icons/lib/fa/close'
+import PlusCircleIcon from 'react-icons/lib/fa/plus-circle'
 
 class Posts extends Component {
 
   state = {
-    sortingMethod: '-voteScore'
+    sortingMethod: '-voteScore',
+    addPostModalOpen: false,
+    editPostModalOpen: false
   }
 
   componentDidMount() {
@@ -19,8 +26,17 @@ class Posts extends Component {
     if(this.props.match) {
       currentCategory = this.props.match.params.category
     }
+
     currentCategory === '' ? this.props.getAllPosts() : this.props.getPostsByCategory(currentCategory)
+    this.props.getAllCategories()
   }
+
+
+  openAddPostModal = () => this.setState(() => ({ addPostModalOpen: true }))
+  closeAddPostModal = () => this.setState(() => ({ addPostModalOpen: false }))
+
+  openEditPostModal = () => this.setState(() => ({ editPostModalOpen: true }))
+  closeEditPostModal = () => this.setState(() => ({ editPostModalOpen: false }))
 
 
   addNewPost = (e) => {
@@ -54,8 +70,6 @@ class Posts extends Component {
     const option = {
       option: vote
     }
-    console.log('postID:', postID)
-    console.log('vote:', option)
     this.props.votePost(postID, option)
   }
 
@@ -72,50 +86,90 @@ class Posts extends Component {
   }
 
   render() {
+    const { addPostModalOpen, editPostModalOpen } = this.state
+    const { categories } = this.props.categories
     const { posts } = this.props.posts
     posts.sort(sortBy(this.state.sortingMethod, 'title'))
     return (
-      <div className="posts">
-        <h1>Posts</h1>
-        <div className="sortBy">
-          Sort by:
-          <button onClick={() => this.changeSort('voteScore')} className="selected">Most votes</button>
-          <button onClick={() => this.changeSort('timestamp')} className="">Date posted</button>
-        </div>
-        <ul>
-        {posts !== '' && posts.map((post) => (
-          <li key={post.id}>
-            <Link to={'/posts/'+post.id}><h4>{post.title}</h4></Link>
-            <span className="metadata">Posted on {timestampToDate(post.timestamp)} by {post.author} in <Link to={'/'+post.category+'posts'}>{post.category}</Link></span>
-            <div>Current vote: {post.voteScore} | <button onClick={() => this.changeVote(post.id, 'upVote')}>Vote Up</button> <button onClick={() => this.changeVote(post.id, 'downVote')}>Vote Down</button></div>
+      <div>
+        <Header categories={categories} />
 
-
-              <form id={post.id} onSubmit={this.updatePost} className="create-contact-form">
-                <div className="create-contact-details">
-                  <input type="text" name="title" />
-                  <input type="text" name="body" />
-                  <button>Update Post</button>
-                </div>
-              </form>
-
-              <button>Edit Post</button>
-              <button onClick={() => this.deleteThisPost(post.id)}>Delete</button>
-
-
-          </li>
-        ))}
-        </ul>
-
-        <form onSubmit={this.addNewPost} className="create-contact-form">
-
-          <div className="create-contact-details">
-            <input type="text" name="title" placeholder="Title" />
-            <input type="text" name="body" placeholder="Body" />
-            <input type="text" name="author" placeholder="Author" />
-            <input type="text" name="category" placeholder="Category" />
-            <button>Add Post</button>
+        <section>
+          <button onClick={() => this.openAddPostModal()}><PlusCircleIcon size={20} /> Add a Post</button>
+          <div className="post-sort-by">
+            Sort by:
+            <button onClick={() => this.changeSort('voteScore')} className="selected">Most votes</button>
+            <button onClick={() => this.changeSort('timestamp')} className="">Date posted</button>
           </div>
-        </form>
+          <ul id="posts">
+          {posts !== '' && posts.map((post) => (
+            <li key={post.id}>
+              <div className="post-header">
+                <Link className="post-title" to={'/posts/'+post.id}><h1>{post.title}</h1></Link>
+              </div>
+
+
+              <div className="post-content">
+
+                <div className="post-metadata">
+                  Posted by <span className="post-author">{post.author}</span> in {post.category}
+
+                  <div className="post-time">{timestampToDate(post.timestamp)}</div>
+                </div>
+              </div>
+
+              <div className="post-vote">
+                Current score: {post.voteScore} | Vote: <button onClick={() => this.changeVote(post.id, 'upVote')}>+</button>  <button onClick={() => this.changeVote(post.id, 'downVote')}>-</button>
+              </div>
+
+              <div className="post-admin">
+                <Link className="btn-post-edit"
+                  to={{
+                  pathname: '/posts/'+post.id,
+                  hash: '#edit',
+                  state: { editPostModalOpen: true }
+                }}>Edit</Link>
+                <button className="btn-post-edit">Edit</button>
+                <button className="btn-post-del" onClick={() => this.deleteThisPost(post.id)}>Delete</button>
+              </div>
+
+            </li>
+          ))}
+          </ul>
+        </section>
+
+
+
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={addPostModalOpen}
+          onRequestClose={this.closeAddPostModal}
+          contentLabel='Modal'
+        >
+
+        <button onClick={() => this.closeAddPostModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
+
+          <section>
+            <h2>Add Post</h2>
+            <form onSubmit={this.addNewPost} className="create-contact-form">
+
+              <div className="create-contact-details">
+                <input type="text" name="title" placeholder="Title" />
+                <textarea name="body" placeholder="Body" />
+                <input type="text" name="author" placeholder="Author" />
+                <select name="category">
+                {categories !== '' && categories.map((category) => (
+                  <option key={category.name}  name={category.name}>{category.name}</option>
+                ))}
+                </select>
+                <button type="submit">Add Post</button>
+              </div>
+            </form>
+          </section>
+
+
+        </Modal>
 
       </div>
     )
@@ -124,11 +178,11 @@ class Posts extends Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ getAllPosts, addPost, votePost, editPost, getPostsByCategory, deletePost }, dispatch)
+  return bindActionCreators({ getAllPosts, addPost, votePost, editPost, getPostsByCategory, deletePost, getAllCategories }, dispatch)
 }
 
-function mapStateToProps({ posts }) {
-  return { posts }
+function mapStateToProps({ posts, categories }) {
+  return { posts, categories }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Posts)

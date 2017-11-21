@@ -1,21 +1,21 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { Redirect } from 'react-router'
+import { getAllCategories } from '../actions/actions_categories'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-import { getAllCategories } from '../actions/actions_categories'
 
-class Categories extends Component {
+class Header extends Component {
 
   componentDidMount() {
     this.props.getAllCategories()
-
   }
 
-  changeCategory(e) {
-    console.log('e', e.target.value)
-
-    this.props.history.push(e.target.value+'/posts')
-
+  changeCategory = (e) => {
+    console.log(e.target.value+'/posts');
+      <Redirect push to={{
+        pathname: e.target.value+'/posts'
+      }}/>
 
   }
 
@@ -45,7 +45,15 @@ function mapStateToProps({ categories }) {
   return { categories }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Categories)
+export default connect(mapStateToProps, mapDispatchToProps)(Header)
+
+
+
+
+
+
+
+
 
 
 
