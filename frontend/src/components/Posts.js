@@ -51,6 +51,7 @@ class Posts extends Component {
       author: values.author,
       category: values.category
     }
+    this.closeAddPostModal()
     this.props.addPost(newPost)
   }
 
@@ -63,6 +64,7 @@ class Posts extends Component {
       title: values.title,
       body: values.body,
     }
+    this.closeEditPostModal()
     this.props.editPost(updatedPost)
   }
 

@@ -39,6 +39,7 @@ class Comments extends Component {
       body: values.body,
       author: values.author,
     }
+    this.closeAddCommentModal()
     this.props.addComment(newComment)
   }
 
@@ -90,19 +91,14 @@ class Comments extends Component {
         <button onClick={() => this.closeAddCommentModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
 
           <section>
-            <h2>Add Post</h2>
-            <form onSubmit={this.addNewPost} className="create-contact-form">
+            <h2>Add Comment</h2>
+            <form onSubmit={this.addNewComment} className="create-contact-form">
 
               <div className="create-contact-details">
-                <input type="text" name="title" placeholder="Title" />
                 <textarea name="body" placeholder="Body" />
                 <input type="text" name="author" placeholder="Author" />
-                <select name="category">
-                {categories !== '' && categories.map((category) => (
-                  <option key={category.name}  name={category.name}>{category.name}</option>
-                ))}
-                </select>
-                <button type="submit">Add Post</button>
+
+                <button type="submit">Add Comment</button>
               </div>
             </form>
           </section>
@@ -115,4 +111,12 @@ class Comments extends Component {
 
 }
 
-export default Comments
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators({ getCommentsFromPost, addComment, voteComment, editComment, deleteComment }, dispatch)
+}
+
+function mapStateToProps({ comments }) {
+  return { comments }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Comments)

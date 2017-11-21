@@ -52,10 +52,10 @@ export function voteComment (commentID, option) {
   }
 }
 
-export function deletePost (commentID) {
+export function deleteComment (commentID) {
   return dispatch => {
     dispatch({type: 'DELETE_COMMENT'})
-    PostsAPI.deletePost(commentID)
+    PostsAPI.deleteComment(commentID)
       .then((response) => {
         dispatch({type: 'DELETE_COMMENT_FULFILLED', payload: response})
       })
