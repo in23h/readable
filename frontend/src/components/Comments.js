@@ -13,19 +13,24 @@ class Comments extends Component {
 
   state = {
     addCommentModalOpen: false,
-    editCommentModalOpen: false
+    editCommentModalOpen: false,
+    currentCommentID: '',
+    currentCommentBody: '',
   }
 
   componentDidMount() {
-    console.log('thepostid', this.props)
-    //this.props.getCommentsFromPost(this.props.postID)
+    this.props.getCommentsFromPost(this.props.thepostid)
   }
 
 
   openAddCommentModal = () => this.setState(() => ({ addCommentModalOpen: true }))
   closeAddCommentModal = () => this.setState(() => ({ addCommentModalOpen: false }))
 
-  openEditCommentModal = () => this.setState(() => ({ editCommentModalOpen: true }))
+  openEditCommentModal = (commentID, commentBody) => this.setState(() => ({
+    currentCommentID: commentID,
+    currentCommentBody: commentBody,
+    editCommentModalOpen: true
+  }))
   closeEditCommentModal = () => this.setState(() => ({ editCommentModalOpen: false }))
 
   addNewComment = (e) => {
@@ -48,10 +53,10 @@ class Comments extends Component {
     const values = serializeForm(e.target, {hash: true})
 
     const updatedComment = {
-      id: e.target.id,
-      title: values.title,
+      id: this.state.currentCommentID,
       body: values.body,
     }
+    this.closeEditCommentModal()
     this.props.editComment(updatedComment)
   }
 
@@ -68,11 +73,33 @@ class Comments extends Component {
 
   render() {
     const { addCommentModalOpen, editCommentModalOpen } = this.state
-    const { comments } = this.props
+    const { comments } = this.props.comments
     return (
       <div>
         <ul>
-          <li>Loop through comments here</li>
+          {comments !== '' && comments.map((comment) => (
+            <li key={comment.id}>
+
+              <div className="comment-content">
+                <p>{comment.body}</p>
+                <div className="comment-metadata">
+                  Posted by <span className="comment-author">{comment.author}</span>
+
+                  <div className="comment-time">{timestampToDate(comment.timestamp)}</div>
+                </div>
+              </div>
+
+              <div className="comment-vote">
+                Current score: {comment.voteScore} | Vote: <button onClick={() => this.changeVote(comment.id, 'upVote')}>+</button>  <button onClick={() => this.changeVote(comment.id, 'downVote')}>-</button>
+              </div>
+
+              <div className="comment-admin">
+                <button className="btn-comment-edit" onClick={() => this.openEditCommentModal(comment.id, comment.body)}>Edit</button>
+                <button className="btn-comment-del" onClick={() => this.deleteThisComment(comment.id)}>Delete</button>
+              </div>
+
+            </li>
+          ))}
         </ul>
 
 
@@ -88,21 +115,42 @@ class Comments extends Component {
           contentLabel='Modal'
         >
 
+        <h2 className="modal-title">Add Comment</h2>
         <button onClick={() => this.closeAddCommentModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
 
-          <section>
-            <h2>Add Comment</h2>
-            <form onSubmit={this.addNewComment} className="create-contact-form">
+          <form onSubmit={this.addNewComment} className="create-contact-form">
 
-              <div className="create-contact-details">
-                <textarea name="body" placeholder="Body" />
-                <input type="text" name="author" placeholder="Author" />
+            <div className="create-contact-details">
+              <textarea name="body" placeholder="Body" />
+              <input type="text" name="author" placeholder="Author" />
 
-                <button type="submit">Add Comment</button>
-              </div>
-            </form>
-          </section>
+              <button type="submit">Add Comment</button>
+              <button onClick={() => this.closeAddCommentModal()}>Cancel</button>
+            </div>
+          </form>
 
+        </Modal>
+
+        <Modal
+          className='modal'
+          overlayClassName='overlay'
+          isOpen={editCommentModalOpen}
+          onRequestClose={this.closeEditCommentModal}
+          contentLabel='Modal'
+        >
+
+        <h2 className="modal-title">Edit Comment</h2>
+        <button onClick={() => this.closeEditCommentModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
+
+          <form onSubmit={this.updateComment} className="modal-form">
+
+            <div className="modal-details">
+              <textarea name="body" placeholder="Body" defaultValue={this.state.currentCommentBody} />
+
+              <button type="submit">Update Comment</button>
+              <button onClick={() => this.closeEditCommentModal()}>Cancel</button>
+            </div>
+          </form>
 
         </Modal>
       </div>

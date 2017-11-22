@@ -9,8 +9,8 @@ export default function reducer(state = {
   voted: false,
   updating: false,
   updated: false,
-  deleting: false;
-  deleted: false;
+  deleting: false,
+  deleted: false,
   error: null,
 }, action) {
   switch(action.type) {
@@ -98,24 +98,19 @@ export default function reducer(state = {
     case 'VOTE_COMMENT_FULFILLED': {
       const { commentID, option } = action.payload
       const voteAmount = option === 'upVote' ? 1 : -1
-      console.log('all state:', state.posts)
 
       let allComments = [...state.comments] || ''
       let commentToUpdate = ''
       let singleComment = state.comment || ''
-      if(state.comments.length > 1) {
         commentToUpdate = allComments.findIndex(comment => comment.id === commentID)
+        console.log('commentToUpdate', commentToUpdate)
         allComments[commentToUpdate].voteScore += voteAmount
-      }
-      if(singleComment !== '') {
-        singleComment.voteScore += voteAmount
-      }
+
       return {
         ...state,
         voting: false,
         voted: true,
         comments: allComments,
-        comment: singleComment
       }
 
     }
@@ -125,25 +120,3 @@ export default function reducer(state = {
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//

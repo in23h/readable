@@ -125,13 +125,10 @@ class Posts extends Component {
               </div>
 
               <div className="post-admin">
-                <Link className="btn-post-edit"
+                <Link className="btn btn-post-edit"
                   to={{
-                  pathname: '/posts/'+post.id,
-                  hash: '#edit',
-                  state: { editPostModalOpen: true }
+                  pathname: '/posts/'+post.id
                 }}>Edit</Link>
-                <button className="btn-post-edit">Edit</button>
                 <button className="btn-post-del" onClick={() => this.deleteThisPost(post.id)}>Delete</button>
               </div>
 
@@ -150,26 +147,24 @@ class Posts extends Component {
           contentLabel='Modal'
         >
 
+        <h2 className="modal-title">Add Post</h2>
         <button onClick={() => this.closeAddPostModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
 
-          <section>
-            <h2>Add Post</h2>
-            <form onSubmit={this.addNewPost} className="create-contact-form">
+          <form onSubmit={this.addNewPost} className="modal-form">
 
-              <div className="create-contact-details">
-                <input type="text" name="title" placeholder="Title" />
-                <textarea name="body" placeholder="Body" />
-                <input type="text" name="author" placeholder="Author" />
-                <select name="category">
-                {categories !== '' && categories.map((category) => (
-                  <option key={category.name}  name={category.name}>{category.name}</option>
-                ))}
-                </select>
-                <button type="submit">Add Post</button>
-              </div>
-            </form>
-          </section>
-
+            <div className="modal-details">
+              <input type="text" name="title" placeholder="Title" />
+              <textarea name="body" placeholder="Body" />
+              <input type="text" name="author" placeholder="Author" />
+              <select name="category">
+              {categories !== '' && categories.map((category) => (
+                <option key={category.name}  name={category.name}>{category.name}</option>
+              ))}
+              </select>
+              <button type="submit">Add Post</button>
+              <button onClick={() => this.closeAddPostModal()}>Cancel</button>
+            </div>
+          </form>
 
         </Modal>
 

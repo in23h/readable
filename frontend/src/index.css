@@ -33,6 +33,7 @@ button, a.btn {
   border-radius: 5px;
   display: inline-block;
   cursor: pointer;
+  text-decoration: none;
 }
 
 button:hover, a.btn:hover {
@@ -65,10 +66,7 @@ section {
 .post-header {
   border-top: solid 5px mediumturquoise;
   padding: 10px 20px;
-}
-
-.post-image {
-
+  min-height: 56px;
 }
 
 .post-content {
@@ -141,6 +139,8 @@ section {
 .post-close {
   color: purple;
   float: right;
+  padding: 0;
+  margin: 0 0 20px 0;
 }
 
 input[type="text"], textarea, select {
@@ -186,4 +186,17 @@ select {
   border-radius: 3px;
   box-shadow: 0 3px 8px 0 rgba(0,0,0,.24), 0 3px 12px 0 rgba(0,0,0,.12);
   min-width: 500px;
+}
+
+.modal-details {
+  padding: 0 20px 0 0;
+}
+
+.modal-title {
+  float: left;
+  margin: 5px 0 0 0;
+}
+
+.modal-form {
+  clear: both;
 }

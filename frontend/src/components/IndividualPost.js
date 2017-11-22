@@ -8,7 +8,6 @@ import { timestampToDate } from '../utils/timestamp_date'
 import Header from './Header'
 import Modal from 'react-modal'
 import CloseIcon from 'react-icons/lib/fa/close'
-import PlusCircleIcon from 'react-icons/lib/fa/plus-circle'
 import Comments from './Comments'
 
 
@@ -40,14 +39,13 @@ class IndividualPost extends Component {
       body: values.body,
     }
     this.props.editPost(updatedPost)
+    this.closeEditPostModal()
   }
 
   changeVote = (postID, vote) => {
     const option = {
       option: vote
     }
-    console.log('postID:', postID)
-    console.log('vote:', option)
     this.props.votePost(postID, option)
   }
 
@@ -63,7 +61,7 @@ class IndividualPost extends Component {
         <Header />
 
         <section>
-          
+
 
           <div className="post-header">
             <div className="post-title"><h1>{ post.title }</h1></div>
@@ -95,7 +93,7 @@ class IndividualPost extends Component {
 
         <section id="comments">
 
-          <Comments thepostid={ post.id } />
+          <Comments thepostid={ this.props.match.params.id } />
         </section>
 
         <Modal
@@ -105,14 +103,15 @@ class IndividualPost extends Component {
           onRequestClose={this.closeEditPostModal}
           contentLabel='Modal'
         >
-
+          <h2 className="modal-title">Edit Post</h2>
           <button onClick={() => this.closeEditPostModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
 
-          <form id={post.id} onSubmit={this.updatePost} className="create-contact-form">
-            <div className="create-contact-details">
-              <input type="text" name="title" value={post.title} />
-              <textarea name="body" value={post.body} />
+          <form id={post.id} onSubmit={this.updatePost} className="modal-form">
+            <div className="modal-details">
+              <input type="text" name="title" defaultValue={post.title} />
+              <textarea name="body" defaultValue={post.body} />
               <button>Update Post</button>
+              <button onClick={() => this.closeEditPostModal()}>Cancel</button>
             </div>
           </form>
 

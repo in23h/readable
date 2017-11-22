@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { Redirect } from 'react-router'
 import { getAllCategories } from '../actions/actions_categories'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
@@ -13,9 +12,7 @@ class Header extends Component {
 
   changeCategory = (e) => {
     console.log(e.target.value+'/posts');
-      <Redirect push to={{
-        pathname: e.target.value+'/posts'
-      }}/>
+
 
   }
 

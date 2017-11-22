@@ -130,7 +130,6 @@ export default function reducer(state = {
     case 'VOTE_POST_FULFILLED': {
       const { postID, option } = action.payload
       const voteAmount = option === 'upVote' ? 1 : -1
-      console.log('all state:', state.posts)
 
       let allPosts = [...state.posts] || ''
       let postToUpdate = ''
@@ -152,32 +151,8 @@ export default function reducer(state = {
 
     }
 
-
-
     default : {
       return state
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
