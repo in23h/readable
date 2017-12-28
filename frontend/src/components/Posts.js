@@ -5,20 +5,21 @@ import { bindActionCreators } from 'redux'
 import { getAllPosts, addPost, votePost, editPost, getPostsByCategory, deletePost } from '../actions/actions_posts'
 import uuidv1 from 'uuid/v1'
 import serializeForm from 'form-serialize'
-import { timestampToDate } from '../utils/timestamp_date'
+import { timestampToDate, capitalize } from '../utils/helpers'
 import sortBy from 'sort-by'
 import { getAllCategories } from '../actions/actions_categories'
 import Header from './Header'
 import Modal from 'react-modal'
 import CloseIcon from 'react-icons/lib/fa/close'
+import SortIcon from 'react-icons/lib/fa/sort'
 import PlusCircleIcon from 'react-icons/lib/fa/plus-circle'
+import createHistory from 'history/createBrowserHistory'
 
 class Posts extends Component {
 
   state = {
     sortingMethod: '-voteScore',
     addPostModalOpen: false,
-    editPostModalOpen: false
   }
 
   componentDidMount() {
@@ -32,12 +33,21 @@ class Posts extends Component {
   }
 
 
+
   openAddPostModal = () => this.setState(() => ({ addPostModalOpen: true }))
   closeAddPostModal = () => this.setState(() => ({ addPostModalOpen: false }))
 
-  openEditPostModal = () => this.setState(() => ({ editPostModalOpen: true }))
-  closeEditPostModal = () => this.setState(() => ({ editPostModalOpen: false }))
-
+  updateCategory = (event) => {
+    const selectedCategory = event.target.value
+    const history = createHistory()
+    if(selectedCategory !== 'all') {
+      this.props.getPostsByCategory(selectedCategory)
+      history.push('/'+selectedCategory+'/posts')
+    } else {
+      this.props.getAllPosts()
+      history.push('/')
+    }
+  }
 
   addNewPost = (e) => {
     e.preventDefault()
@@ -88,21 +98,32 @@ class Posts extends Component {
   }
 
   render() {
-    const { addPostModalOpen, editPostModalOpen } = this.state
+    const { addPostModalOpen } = this.state
     const { categories } = this.props.categories
     const { posts } = this.props.posts
     posts.sort(sortBy(this.state.sortingMethod, 'title'))
     return (
       <div>
-        <Header categories={categories} />
+        <Header />
 
-        <section>
+        <div className="subheader">
           <button onClick={() => this.openAddPostModal()}><PlusCircleIcon size={20} /> Add a Post</button>
+          Category:
+          <select onChange={(event) => this.updateCategory(event)}>
+            <option value="all">All</option>
+          {categories !== '' && categories.map((category) => (
+            <option key={category.path} value={category.path}>{capitalize(category.name)}</option>
+          ))}
+          </select>
+
           <div className="post-sort-by">
             Sort by:
-            <button onClick={() => this.changeSort('voteScore')} className="selected">Most votes</button>
-            <button onClick={() => this.changeSort('timestamp')} className="">Date posted</button>
+            <button onClick={() => this.changeSort('voteScore')} className="selected">Most votes <SortIcon size={20} /></button>
+            <button onClick={() => this.changeSort('timestamp')} className="">Date posted <SortIcon size={20} /></button>
           </div>
+        </div>
+        <section>
+
           <ul id="posts">
           {posts !== '' && posts.map((post) => (
             <li key={post.id}>
@@ -147,8 +168,8 @@ class Posts extends Component {
           contentLabel='Modal'
         >
 
-        <h2 className="modal-title">Add Post</h2>
-        <button onClick={() => this.closeAddPostModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
+          <h2 className="modal-title">Add Post</h2>
+          <button onClick={() => this.closeAddPostModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
 
           <form onSubmit={this.addNewPost} className="modal-form">
 

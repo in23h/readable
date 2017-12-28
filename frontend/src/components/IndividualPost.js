@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { getPostDetails, votePost, editPost, deletePost } from '../actions/actions_posts'
 import serializeForm from 'form-serialize'
-import { timestampToDate } from '../utils/timestamp_date'
+import { timestampToDate } from '../utils/helpers'
 import Header from './Header'
 import Modal from 'react-modal'
 import CloseIcon from 'react-icons/lib/fa/close'
 import Comments from './Comments'
+import createHistory from 'history/createBrowserHistory'
 
 
 class IndividualPost extends Component {
@@ -50,7 +50,10 @@ class IndividualPost extends Component {
   }
 
   deleteThisPost = (postID) => {
+
     this.props.deletePost(postID)
+    const history = createHistory()
+    history.push('/')
   }
 
   render() {

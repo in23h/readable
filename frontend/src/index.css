@@ -10,11 +10,22 @@ body {
   padding: 10px 20px;
 }
 
-#header select {
+#header a {
+  text-decoration: none;
+  color: white;
+}
+
+.subheader {
+  background-color: mediumturquoise;
+  color: white;
+  padding: 0 20px 10px 20px;
+}
+
+.subheader select {
   width: auto;
   height: 30px;
   display: inline-block;
-  margin: 0 0 0 5px;
+  margin: 0 5px;
 }
 
 a.top-nav {

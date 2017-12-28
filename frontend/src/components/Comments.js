@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import uuidv1 from 'uuid/v1'
 import serializeForm from 'form-serialize'
-import { timestampToDate } from '../utils/timestamp_date'
+import { timestampToDate } from '../utils/helpers'
 import Modal from 'react-modal'
 import CloseIcon from 'react-icons/lib/fa/close'
 import PlusCircleIcon from 'react-icons/lib/fa/plus-circle'
@@ -118,9 +118,9 @@ class Comments extends Component {
         <h2 className="modal-title">Add Comment</h2>
         <button onClick={() => this.closeAddCommentModal()} className='icon-btn post-close'><CloseIcon size={30}/></button>
 
-          <form onSubmit={this.addNewComment} className="create-contact-form">
+          <form onSubmit={this.addNewComment} className="modal-form">
 
-            <div className="create-contact-details">
+            <div className="modal-details">
               <textarea name="body" placeholder="Body" />
               <input type="text" name="author" placeholder="Author" />
 
